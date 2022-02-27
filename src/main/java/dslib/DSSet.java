@@ -67,6 +67,15 @@ public class DSSet implements DSElement {
 
         if (other instanceof DSSet) {
             DSSet test = (DSSet) other;
+
+            if (test.elements.isEmpty() || this.elements.isEmpty()) {
+                if (test.elements.isEmpty() && this.elements.isEmpty()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
             for (DSElement e : elements) {
                 boolean found = false;
                 for (DSElement f : test.elements) {

@@ -14,11 +14,11 @@ public class App {
 
         public static void printMenu() {
         System.out.println();
-        System.out.println("Menu");
-        System.out.println("=============================");
-        System.out.println("1. Set operations practice");
-        System.out.println("9. Exit");
-        System.out.println("Choose [12345]: ");
+        System.out.println("Меню");
+        System.out.println("====================================");
+        System.out.println("1. Задачи по операции с множества");
+        System.out.println("9. Изход");
+        System.out.print("Изберете [19]: ");
     }
 
     public static void setPractice1 (Scanner s) {
@@ -98,10 +98,10 @@ public class App {
                 break;
         }
 
-        System.out.println("Describe union, intersection, difference, symmetric difference of the following two sets:");
+        System.out.println("Намерете обединението, сечението, разликата и симетричната разлика на множествата:");
         System.out.println(set1);
         System.out.println(set2);
-        System.out.print("Press enter to see the solution: ");
+        System.out.print("Натиснете Enter за получаване на решенията: ");
         s.nextLine();
 
         System.out.print(set1);
@@ -195,8 +195,8 @@ public class App {
             set2 = new DSSet(elements);
         }
 
-        System.out.println("Describe complement of " + set2 + " in " + set1);
-        System.out.print("Press enter to see the solution: ");
+        System.out.println("Намерете допълнението на множеството " + set2 + " в " + set1);
+        System.out.print("Натиснете Enter за да видите решенията: ");
         s.nextLine();
 
         System.out.println(set2.complement(set1));
@@ -216,6 +216,7 @@ public class App {
 
             if (choice.strip().equals("1")) {
                 setPractice1(s);
+                System.out.println();
                 setPractice2(s);
             }
 

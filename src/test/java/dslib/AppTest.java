@@ -54,6 +54,14 @@ public class AppTest
         assertEquals(d, e);
         assertEquals(e, d);
 
+        DSSet f = new DSSet("a");
+        DSSet g = new DSSet();
+        assertNotEquals(f, g);
+
+        f = new DSSet(new DSSet());
+        g = new DSSet();
+        assertNotEquals(f, g);
+
     }
 
     /**
@@ -125,7 +133,7 @@ public class AppTest
         q = (DSSet) DSParser.parse("{{}, a, b}");
         p = (DSSet) DSParser.parse("{}");
         assertEquals(q.intersect(p), p);
-        assertEquals(p.intersect(q), q);
+        assertEquals(p.intersect(q), p);
 
         p = (DSSet) DSParser.parse("{{}}");
         assertEquals(q.intersect(p), p);
@@ -152,9 +160,10 @@ public class AppTest
         assertEquals(p.union(q), q);
         assertEquals(q.union(p), p);
 
-        p = (DSSet) DSParser.parse("{a, (1,2), {1,2}}");
-        q = (DSSet) DSParser.parse("{{4,5}}");
-        r = (DSSet) DSParser.parse("{{4,5}, a, (1,2), {1,2}}");
+        p = (DSSet) DSParser.parse("{{1,2},2,{2,4},1}");
+        q = (DSSet) DSParser.parse("{{},3,{2,4}}");
+        r = (DSSet) DSParser.parse("{{1,2},2,{2,4},1,{},3}");
+        DSSet s = p.union(q);
         assertEquals(p.union(q), q.union(p));
         assertEquals(p.union(q), r);
 
