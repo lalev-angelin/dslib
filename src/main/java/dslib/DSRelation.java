@@ -59,7 +59,15 @@ public class DSRelation implements DSElement {
         if (other == null) return false;
 
         if (other instanceof DSRelation) {
+
             DSRelation test = (DSRelation) other;
+            if (test.isEmpty() || this.isEmpty()) {
+                if (test.isEmpty() && this.isEmpty() ) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
 
             for (DSPair m : members) {
                 boolean found = false;
@@ -102,11 +110,7 @@ public class DSRelation implements DSElement {
         if (dims==1) {
             return new DSRelation(members.get(0));
         } else {
-            return new DSRelation(members.get(0),
-                    members.stream()
-                            .skip(1)
-                            .toList()
-                            .toArray(new DSPair[1]));
+            return new DSRelation(members.toArray(new DSPair[1]));
         }
     }
 
@@ -127,24 +131,20 @@ public class DSRelation implements DSElement {
         if (members.size()==1) {
             return new DSRelation(inverseMembers.get(0));
         } else {
-            return new DSRelation(inverseMembers.get(0),
-                    inverseMembers.stream()
-                            .skip(1)
-                            .toList()
-                            .toArray(new DSPair[1]));
+            return new DSRelation(inverseMembers.toArray(new DSPair[1]));
         }
     }
 
     public DSRelation compose(DSRelation other) {
         List<DSPair> newMembers = new ArrayList<>();
-        for (DSPair m : members) {
-            for (DSPair o: other.members) {
-                if (m.getSecond().equals(o.getFirst())) {
-                    newMembers.add(new DSPair(m.getFirst(), o.getSecond()));
+        for (DSPair o: other.members) {
+            for (DSPair m : members) {
+                if (o.getSecond().equals(m.getFirst())) {
+                    newMembers.add(new DSPair(o.getFirst(), m.getSecond()));
                 }
             }
         }
 
-        return new
+        return new DSRelation(newMembers.toArray(new DSPair[1]));
     }
 }

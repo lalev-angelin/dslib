@@ -247,6 +247,18 @@ public class AppTest
         assertEquals(s.inverse().inverse(), s);
     }
 
+    @Test
+    public void testDSRelationCompose() {
+        DSRelation a = new DSRelation("(a,1)","(b,2)", "(c,3)");
+        DSRelation b = new DSRelation("(1,a)", "(2,b)", "(3,c)");
+        DSRelation e = new DSRelation("(1,1)", "(2,2)", "(3,3)");
+        DSRelation f = new DSRelation("(a,a)", "(b,b)", "(c,c)");
+        DSRelation g = a.compose(b);
+        assertEquals(g,e);
+        DSRelation h = b.compose(a);
+        assertEquals(h, f);
+    }
+
     {
         assertTrue( true );
     }
