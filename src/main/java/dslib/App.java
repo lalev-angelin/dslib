@@ -203,6 +203,39 @@ public class App {
         System.out.println(set2.complement(set1));
     }
 
+    public static void relationPractice1(Scanner s) {
+        Random r = new Random(System.currentTimeMillis());
+        int numPairs = 2 + r.nextInt(3);
+        List<DSPair> pairs = new ArrayList<>();
+        for (int i=0; i<numPairs; i++) {
+            pairs.add(new DSPair(String.valueOf(r.nextInt(5)), String.valueOf(r.nextInt(5))));
+        }
+
+        List<DSPair> members = new ArrayList<>();
+        for (int i=0; i<pairs.size(); i++) {
+            if (r.nextBoolean()) {
+                members.add(pairs.get(i));
+            }
+        }
+        DSRelation r1 = new DSRelation(members);
+        members.clear();
+
+        for (int i=0; i<pairs.size(); i++) {
+            if (r.nextBoolean()) {
+                members.add(pairs.get(i));
+            }
+        }
+        DSRelation r2 = new DSRelation(members);
+
+        System.out.println("Намерете "+r1+" \u25ef "+r2);
+
+        System.out.println("Натиснете Enter за отговор: ");
+        s.nextLine();
+
+        System.out.println(r1+" \u25ef "+r2+" = "+r1.compose(r2));
+    }
+
+
     public static void main( String[] args ) {
         Scanner s = new Scanner(System.in);
 
@@ -219,6 +252,12 @@ public class App {
                 setPractice1(s);
                 System.out.println();
                 setPractice2(s);
+                continue;
+            }
+
+            if (choice.strip().equals("2")) {
+                relationPractice1(s);
+                continue;
             }
 
             if (choice.strip().equals("9")) {

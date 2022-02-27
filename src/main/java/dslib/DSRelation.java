@@ -13,8 +13,16 @@ public class DSRelation implements DSElement {
 
     public DSRelation(DSPair... more) {
         this();
-        Arrays.stream(more)
-                .forEach(m->members.add(m.copy()));
+        if (more!=null && more.length!=0) {
+            Arrays.stream(more)
+                    .forEach(m -> members.add(m.copy()));
+        }
+    }
+
+    public DSRelation(List<DSPair> more) {
+        this();
+
+        more.forEach(m->members.add(m.copy()));
     }
 
     public DSRelation(String... more) {
@@ -88,7 +96,11 @@ public class DSRelation implements DSElement {
     }
 
     public DSSet asSet() {
-        return new DSSet(members.toArray(new DSElement[1]));
+        if (members.isEmpty()) {
+            return new DSSet();
+        } else {
+            return new DSSet(members.toArray(new DSPair[1]));
+        }
     }
 
     @Override
@@ -145,6 +157,10 @@ public class DSRelation implements DSElement {
             }
         }
 
-        return new DSRelation(newMembers.toArray(new DSPair[1]));
+        if (newMembers.isEmpty()) {
+            return new DSRelation();
+        } else {
+            return new DSRelation(newMembers.toArray(new DSPair[1]));
+        }
     }
 }

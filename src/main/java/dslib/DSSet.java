@@ -11,7 +11,13 @@ public class DSSet implements DSElement {
     }
 
     public DSSet(DSElement... elements) {
-        this(List.of(elements));
+        this();
+
+        Arrays.stream(elements).forEach(e -> {
+            if (!this.elements.contains(e)) {
+                this.elements.add((e.copy()));
+            }
+        });
     }
 
     public DSSet(List<DSElement> elements) {
