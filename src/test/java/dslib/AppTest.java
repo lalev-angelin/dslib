@@ -224,6 +224,14 @@ public class AppTest
     }
 
     @Test
+    public void testDSRelationAsSet() {
+        DSSet d = (DSSet) DSParser.parse("{(1,2), (3,4)}");
+        DSRelation e = new DSRelation("(1,2)", "(3,4)");
+        DSSet f = e.asSet();
+        assertEquals(d, f);
+    }
+
+    @Test
     public void testDSRelationInvert() {
         DSRelation r = new DSRelation(new DSPair("1","1"),
                 new DSPair("2","1"),
@@ -233,7 +241,8 @@ public class AppTest
                 new DSPair("1","2"),
                 new DSPair("4","3"),
                 new DSPair("6","5"));
-        assertEquals(r.inverse(), s);
+        DSRelation p = r.inverse();
+        assertEquals(p, s);
         assertEquals(r.inverse().inverse(), r);
         assertEquals(s.inverse().inverse(), s);
     }

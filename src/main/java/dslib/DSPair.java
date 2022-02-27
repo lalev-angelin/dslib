@@ -29,18 +29,18 @@ public final class DSPair implements DSElement {
 
     @Override
     public String toString() {
-        return "("+first.toString()+","+second.toString()+")";
+        return "(" + first.toString() + "," + second.toString() + ")";
     }
 
     @Override
     public boolean equals(Object other) {
-        if (other==null) {
+        if (other == null) {
             return false;
         }
 
         if (other instanceof DSPair) {
             return first.equals(((DSPair) other).first) &&
-                    second.equals(((DSPair)other).second);
+                    second.equals(((DSPair) other).second);
         } else {
             return false;
         }

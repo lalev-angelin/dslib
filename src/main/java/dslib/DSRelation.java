@@ -7,16 +7,18 @@ import java.util.List;
 public class DSRelation implements DSElement {
     private final List<DSPair> members;
 
-    public DSRelation(DSPair member1, DSPair... more) {
+    public DSRelation() {
         members = new ArrayList<>();
-        members.add(member1);
+    }
+
+    public DSRelation(DSPair... more) {
+        this();
         Arrays.stream(more)
                 .forEach(m->members.add(m.copy()));
     }
 
-    public DSRelation(String member1, String... more) {
+    public DSRelation(String... more) {
         List<String> strMembers = new ArrayList<>();
-        strMembers.add(member1);
         strMembers.addAll(Arrays.asList(more));
 
         members = new ArrayList<>();
@@ -33,13 +35,18 @@ public class DSRelation implements DSElement {
 
     }
 
+    public boolean isEmpty() {
+        return members.isEmpty();
+    }
+
     @Override
     public DSElement copy() {
-        return new DSRelation(members.get(0),
-                members.stream()
-                        .skip(1)
-                        .toList().toArray(new DSPair[1])
-        );
+        if (isEmpty()) {
+            return new DSRelation();
+        } else {
+            return new DSRelation(
+                    members.toArray(new DSPair[1]));
+        }
     }
 
     @Override
@@ -73,7 +80,7 @@ public class DSRelation implements DSElement {
     }
 
     public DSSet asSet() {
-        return new DSSet((DSElement) members);
+        return new DSSet(members.toArray(new DSElement[1]));
     }
 
     @Override
@@ -118,13 +125,26 @@ public class DSRelation implements DSElement {
                 .toList();
 
         if (members.size()==1) {
-            return new DSRelation(members.get(0));
+            return new DSRelation(inverseMembers.get(0));
         } else {
-            return new DSRelation(members.get(0),
-                    members.stream()
+            return new DSRelation(inverseMembers.get(0),
+                    inverseMembers.stream()
                             .skip(1)
                             .toList()
                             .toArray(new DSPair[1]));
         }
+    }
+
+    public DSRelation compose(DSRelation other) {
+        List<DSPair> newMembers = new ArrayList<>();
+        for (DSPair m : members) {
+            for (DSPair o: other.members) {
+                if (m.getSecond().equals(o.getFirst())) {
+                    newMembers.add(new DSPair(m.getFirst(), o.getSecond()));
+                }
+            }
+        }
+
+        return new
     }
 }
