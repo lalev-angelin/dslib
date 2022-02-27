@@ -1,5 +1,7 @@
 package dslib;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -18,9 +20,6 @@ public class App {
         System.out.println("9. Exit");
         System.out.println("Choose [12345]: ");
     }
-
-
-
 
     public static void setPractice1 (Scanner s) {
         DSSet set1;
@@ -99,7 +98,7 @@ public class App {
                 break;
         }
 
-        System.out.println("Describe union, intersection, difference, symmetric difference and the power sets of the following two sets:");
+        System.out.println("Describe union, intersection, difference, symmetric difference of the following two sets:");
         System.out.println(set1);
         System.out.println(set2);
         System.out.print("Press enter to see the solution: ");
@@ -140,7 +139,68 @@ public class App {
         System.out.println(set2.powerSet());
     }
 
+    public static void setPractice2 (Scanner s) {
+        Random r = new Random(System.currentTimeMillis());
 
+        DSSet set1;
+        DSSet set2;
+
+        int j = r.nextInt(2);
+        if (j == 0) {
+            set1 = DSGenerator.generateSet(6, 9,
+                    new DSElement[]{
+                            new DSValue("a"),
+                            new DSValue("b"),
+                            new DSValue("c"),
+                            new DSValue("d"),
+                            new DSValue("e"),
+                            new DSValue("f"),
+                            new DSValue("g"),
+                            new DSValue("h"),
+                            new DSValue("i"),
+                            new DSValue("j")
+                    });
+
+            List<DSElement> elements = new ArrayList<>();
+            for (int i = 0; i < set1.getElementCount(); i++) {
+                if (r.nextInt(4) < 2) {
+                    elements.add(set1.getElement(i));
+                }
+            }
+
+            set2 = new DSSet(elements);
+
+        } else {
+            set1 = DSGenerator.generateSet(6, 9,
+                    new DSElement[]{
+                            new DSValue("1"),
+                            new DSValue("2"),
+                            new DSValue("3"),
+                            new DSValue("4"),
+                            DSParser.parse("{1,2}"),
+                            DSParser.parse("{2,4}"),
+                            DSParser.parse("{1,3}"),
+                            DSParser.parse("{1,2,3}"),
+                            DSParser.parse("{1,4}"),
+                            DSParser.parse("{}")
+                    });
+
+            List<DSElement> elements = new ArrayList<>();
+            for (int i = 0; i < set1.getElementCount(); i++) {
+                if (r.nextInt(4) < 2) {
+                    elements.add(set1.getElement(i));
+                }
+            }
+
+            set2 = new DSSet(elements);
+        }
+
+        System.out.println("Describe complement of " + set2 + " in " + set1);
+        System.out.print("Press enter to see the solution: ");
+        s.nextLine();
+
+        System.out.println(set2.complement(set1));
+    }
 
     public static void main( String[] args ) {
         Scanner s = new Scanner(System.in);
@@ -156,6 +216,7 @@ public class App {
 
             if (choice.strip().equals("1")) {
                 setPractice1(s);
+                setPractice2(s);
             }
 
             if (choice.strip().equals("9")) {

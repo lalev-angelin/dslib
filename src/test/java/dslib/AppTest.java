@@ -137,7 +137,7 @@ public class AppTest
     }
 
     @Test
-    public void testDSSJoin() {
+    public void testDSSUnion() {
         DSSet p = (DSSet) DSParser.parse("{a,b,c}");
         DSSet q = (DSSet) DSParser.parse("{d, e, f, a}");
         DSSet r = (DSSet) DSParser.parse("{a,b,c,d,e,f}");
@@ -157,6 +157,11 @@ public class AppTest
         r = (DSSet) DSParser.parse("{{4,5}, a, (1,2), {1,2}}");
         assertEquals(p.union(q), q.union(p));
         assertEquals(p.union(q), r);
+
+        p = (DSSet) DSParser.parse("{{},1}");
+        q = (DSSet) DSParser.parse("{2,3}");
+        assertEquals(p.union(q), (DSSet) DSParser.parse("{{},1,2,3}"));
+
     }
 
     @Test

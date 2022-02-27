@@ -151,7 +151,7 @@ public class DSSet implements DSElement {
     }
 
     public DSSet complement(DSSet whole) {
-        return subtract(whole);
+        return whole.subtract(this);
     }
 
     public DSSet symmetricDifference(DSSet other) {
@@ -191,6 +191,10 @@ public class DSSet implements DSElement {
 
     public DSElement getElement(int position) {
         return elements.get(position).copy();
+    }
+
+    public int getElementCount() {
+        return elements.size();
     }
 
     public DSSet powerSet() {
