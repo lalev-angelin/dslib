@@ -3,7 +3,6 @@ package dslib;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Spliterators;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -142,22 +141,22 @@ public class AppTest
         DSSet p = (DSSet) DSParser.parse("{a,b,c}");
         DSSet q = (DSSet) DSParser.parse("{d, e, f, a}");
         DSSet r = (DSSet) DSParser.parse("{a,b,c,d,e,f}");
-        assertEquals(p.join(q), r);
-        assertEquals(q.join(p), r);
+        assertEquals(p.union(q), r);
+        assertEquals(q.union(p), r);
 
         p = (DSSet) DSParser.parse("{}");
-        assertEquals(p.join(p), p);
+        assertEquals(p.union(p), p);
 
         p = (DSSet) DSParser.parse("{a,a,a}");
         q = (DSSet) DSParser.parse("{a}");
-        assertEquals(p.join(q), q);
-        assertEquals(q.join(p), p);
+        assertEquals(p.union(q), q);
+        assertEquals(q.union(p), p);
 
         p = (DSSet) DSParser.parse("{a, (1,2), {1,2}}");
         q = (DSSet) DSParser.parse("{{4,5}}");
         r = (DSSet) DSParser.parse("{{4,5}, a, (1,2), {1,2}}");
-        assertEquals(p.join(q), q.join(p));
-        assertEquals(p.join(q), r);
+        assertEquals(p.union(q), q.union(p));
+        assertEquals(p.union(q), r);
     }
 
     @Test
@@ -181,6 +180,19 @@ public class AppTest
         p = (DSSet) DSParser.parse("{a,{b,1},c}");
         q = (DSSet) DSParser.parse("{a,{b,2}}");
         assertEquals(p.symmetricDifference(q), DSParser.parse("{{b,1}, {b,2}, c}"));
+    }
+
+    @Test
+    public void testDSSPowerSet() {
+        DSSet p = (DSSet) DSParser.parse("{a,b,c}");
+        DSSet q = (DSSet) DSParser.parse("{{}, {a}, {b}, {c}, {a,b}, {a,c}, {b,c}, {a,b,c}}");
+        assertEquals(p.powerSet(), q);
+
+        p = (DSSet) DSParser.parse("{}");
+        q = (DSSet) DSParser.parse("{{}}");
+        assertEquals(p.powerSet(), q);
+
+
     }
 
     {

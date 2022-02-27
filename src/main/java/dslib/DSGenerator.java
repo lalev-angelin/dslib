@@ -7,11 +7,15 @@ import java.util.Random;
 public class DSGenerator {
     static Random r = new Random(System.currentTimeMillis());
 
-    public static void generate(int numElements, DSElement[] elements) {
+    public static DSSet generateSet(int minElements, int maxElements, DSElement[] elements) {
         List<DSElement> e = new ArrayList<>();
 
-        for (int i=0; i<numElements; i++) {
-            e.add(elements[r.nextInt(elements.length)]);
+        if (minElements>maxElements) return new DSSet();
+        int j = r.nextInt(maxElements-minElements);
+
+        for (int i=0; i<minElements+j; i++) {
+            e.add(elements[r.nextInt(elements.length)].copy());
         }
+        return new DSSet(e);
     }
 }

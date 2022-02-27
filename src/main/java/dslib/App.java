@@ -1,15 +1,167 @@
 package dslib;
 
+import java.util.Random;
+import java.util.Scanner;
+
 /**
  * Hello world!
  *
  */
-public class App 
-{
+
+public class App {
+
+        public static void printMenu() {
+        System.out.println();
+        System.out.println("Menu");
+        System.out.println("=============================");
+        System.out.println("1. Set operations practice");
+        System.out.println("9. Exit");
+        System.out.println("Choose [12345]: ");
+    }
+
+
+
+
+    public static void setPractice1 (Scanner s) {
+        DSSet set1;
+        DSSet set2;
+
+        Random r = new Random(System.currentTimeMillis());
+        int j = r.nextInt(3);
+        switch (j) {
+
+            case 0:
+                set1 = DSGenerator.generateSet(3, 5,
+                        new DSElement[]{
+                                new DSValue("a"),
+                                new DSValue("b"),
+                                new DSValue("c"),
+                                new DSValue("d"),
+                                new DSValue("e"),
+                                new DSValue("f")
+                        });
+
+                set2 = DSGenerator.generateSet(3, 5,
+                        new DSElement[]{
+                                new DSValue("a"),
+                                new DSValue("b"),
+                                new DSValue("c"),
+                                new DSValue("d"),
+                                new DSValue("e"),
+                                new DSValue("f")
+                        });
+                break;
+
+            case 1:
+                set1 = DSGenerator.generateSet(4, 6,
+                        new DSElement[]{
+                                new DSValue("1"),
+                                new DSValue("2"),
+                                new DSValue("3"),
+                                new DSValue("4"),
+                                new DSValue("5"),
+                                new DSValue("6")
+                        });
+
+                set2 = DSGenerator.generateSet(2, 5,
+                        new DSElement[]{
+                                new DSValue("1"),
+                                new DSValue("2"),
+                                new DSValue("3"),
+                                new DSValue("4"),
+                                new DSValue("5"),
+                                new DSValue("6")
+                        });
+                break;
+
+            default:
+                set1 = DSGenerator.generateSet(4, 6,
+                        new DSElement[]{
+                                new DSValue("1"),
+                                new DSValue("2"),
+                                new DSValue("3"),
+                                new DSValue("4"),
+                                DSParser.parse("{1,2}"),
+                                DSParser.parse("{2,4}"),
+                                DSParser.parse("{}")
+                        });
+
+                set2 = DSGenerator.generateSet(2, 5,
+                        new DSElement[] {
+                            new DSValue("1"),
+                            new DSValue("2"),
+                            new DSValue("3"),
+                            new DSValue("4"),
+                            DSParser.parse("{1,2}"),
+                            DSParser.parse("{2,4}"),
+                            DSParser.parse("{}")
+                        });
+                break;
+        }
+
+        System.out.println("Describe union, intersection, difference, symmetric difference and the power sets of the following two sets:");
+        System.out.println(set1);
+        System.out.println(set2);
+        System.out.print("Press enter to see the solution: ");
+        s.nextLine();
+
+        System.out.print(set1);
+        System.out.print(" \u222a ");
+        System.out.print(set2);
+        System.out.print(" = ");
+        System.out.println(set1.union(set2));
+
+        System.out.print(set1);
+        System.out.print(" \u2229 ");
+        System.out.print(set2);
+        System.out.print(" = ");
+        System.out.println(set1.intersect(set2));
+
+        System.out.print(set1);
+        System.out.print(" - ");
+        System.out.print(set2);
+        System.out.print(" = ");
+        System.out.println(set1.subtract(set2));
+
+        System.out.print(set1);
+        System.out.print(" \u2a01 ");
+        System.out.print(set2);
+        System.out.print(" = ");
+        System.out.println(set1.symmetricDifference(set2));
+
+        System.out.print("2^");
+        System.out.print(set1);
+        System.out.print(" = ");
+        System.out.println(set1.powerSet());
+
+        System.out.print("2^");
+        System.out.print(set2);
+        System.out.print(" = ");
+        System.out.println(set2.powerSet());
+    }
+
+
 
     public static void main( String[] args ) {
+        Scanner s = new Scanner(System.in);
 
+         String choice;
+        while (true) {
+            try {
+                printMenu();
+                choice = s.nextLine();
+            } catch (Exception e) {
+                continue;
+            }
 
+            if (choice.strip().equals("1")) {
+                setPractice1(s);
+            }
 
+            if (choice.strip().equals("9")) {
+                System.exit(0);
+            }
+
+        }
     }
 }

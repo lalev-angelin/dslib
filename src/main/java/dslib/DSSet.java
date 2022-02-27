@@ -1,5 +1,6 @@
 package dslib;
 
+import java.lang.annotation.ElementType;
 import java.util.*;
 
 public class DSSet implements DSElement {
@@ -114,7 +115,7 @@ public class DSSet implements DSElement {
         return new DSSet(elements.toArray(new DSElement[1]));
     }
 
-    public DSSet join(DSSet other) {
+    public DSSet union(DSSet other) {
         List<DSElement> elements = new ArrayList<>();
 
         elements.addAll(this.elements);
@@ -192,4 +193,30 @@ public class DSSet implements DSElement {
         return elements.get(position).copy();
     }
 
+    public DSSet powerSet() {
+        List<DSElement> e = new ArrayList<>();
+
+        long p = (long) Math.pow(2, this.elements.size());
+        for (int i=0; i<p; i++) {
+            List<DSElement> f = new ArrayList<>();
+            for (int k=0; k<this.elements.size(); k++) {
+                if ((1<<k & i) == (1<<k)) {
+                    f.add(this.elements.get(k));
+                }
+            }
+
+            if (f.isEmpty()) {
+                e.add(new DSSet());
+            } else {
+                e.add(new DSSet(f));
+            }
+        }
+
+        if (e.isEmpty()) {
+            return new DSSet();
+        } else {
+            return new DSSet(e);
+        }
+
+    };
 }
