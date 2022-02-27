@@ -209,6 +209,35 @@ public class AppTest
 
     }
 
+    @Test
+    public void testDSRelationConstructor() {
+        DSRelation r = new DSRelation(new DSPair("1","1"),
+                new DSPair("2","1"),
+                new DSPair("3","4"),
+                new DSPair("5","6"));
+        assertEquals(r, r);
+        DSRelation s = new DSRelation("(1,1)", "(2,1)", "(3,4)", "(5,6)");
+        assertEquals(r, s);
+
+        DSRelation q = new DSRelation("(1,1)", "(2,1)", "(3,4)");
+        assertNotEquals(s, q);
+    }
+
+    @Test
+    public void testDSRelationInvert() {
+        DSRelation r = new DSRelation(new DSPair("1","1"),
+                new DSPair("2","1"),
+                new DSPair("3","4"),
+                new DSPair("5","6"));
+        DSRelation s = new DSRelation(new DSPair("1","1"),
+                new DSPair("1","2"),
+                new DSPair("4","3"),
+                new DSPair("6","5"));
+        assertEquals(r.inverse(), s);
+        assertEquals(r.inverse().inverse(), r);
+        assertEquals(s.inverse().inverse(), s);
+    }
+
     {
         assertTrue( true );
     }

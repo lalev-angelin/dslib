@@ -16,9 +16,10 @@ public class App {
         System.out.println();
         System.out.println("Меню");
         System.out.println("====================================");
-        System.out.println("1. Задачи по операции с множества");
+        System.out.println("1. Задачи по действия с множества");
+        System.out.println("2. Задачи за релации");
         System.out.println("9. Изход");
-        System.out.print("Изберете [19]: ");
+        System.out.print("Изберете [129]: ");
     }
 
     public static void setPractice1 (Scanner s) {
