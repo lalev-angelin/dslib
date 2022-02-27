@@ -1,30 +1,38 @@
 package dslib;
 
-public final class DSValue<T> implements DSElement {
-    private final T value;
+public final class DSValue implements DSElement {
+    private final String value;
 
-    public DSValue(T value) {
-        testTypeParameter(value);
+    public DSValue(String value) {
         this.value = value;
     }
 
-    @Override
-    public String asString() {
-        return value.toString();
+    public String getValue() {
+        return value;
     }
 
     @Override
-    public boolean equalsTo(Object other) {
-        if (other==null) return false;
-        if (other instanceof DSValue<?>) {
-            return value.equals(((DSValue<T>) other).value);
+    public DSType getType() {
+        return DSType.DS_VALUE;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (o instanceof DSValue) {
+            return ((DSValue)o).value.equals(this.value);
         } else {
             return false;
         }
     }
 
     @Override
-    public DSValue<T> makeCopy() {
-        return new DSValue<>(value);
+    public String toString() {
+        return value;
+    }
+
+    @Override
+    public DSValue copy() {
+        return new DSValue(value);
     }
 }

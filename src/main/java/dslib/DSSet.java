@@ -3,21 +3,41 @@ package dslib;
 import java.util.*;
 
 public class DSSet implements DSElement {
-    List<DSElement> elements;
+    private final List<DSElement> elements;
 
     public DSSet() {
         elements = new ArrayList<>();
     }
 
     public DSSet(DSElement... elements) {
+        this(List.of(elements));
+    }
+
+    public DSSet(List<DSElement> elements) {
+        this();
+
+        elements.forEach(e -> {
+            if (!this.elements.contains(e)) {
+                this.elements.add((e.copy()));
+            }
+        });
+    }
+
+    public DSSet(String ...elements) {
         this();
 
         Arrays.stream(elements)
                 .forEach(e -> {
-                    if (!this.elements.contains(e)) {
-                        this.elements.add((DSElement) e.makeCopy());
+                    DSValue v = new DSValue(e);
+                    if (!this.elements.contains(v)) {
+                        this.elements.add((v.copy()));
                     }
                 });
+    }
+
+    @Override
+    public DSType getType() {
+        return DSType.DS_SET;
     }
 
     public boolean isEmpty() {
@@ -25,14 +45,14 @@ public class DSSet implements DSElement {
     }
 
     @Override
-    public String asString() {
+    public String toString() {
         if (isEmpty()) {
             return "{}";
         }
 
         StringBuilder result = new StringBuilder("{");
         elements.forEach(e -> {
-            result.append(e.asString());
+            result.append(e.toString());
             result.append(",");
         });
         result.deleteCharAt(result.length() - 1);
@@ -41,7 +61,7 @@ public class DSSet implements DSElement {
     }
 
     @Override
-    public boolean equalsTo(Object other) {
+    public boolean equals(Object other) {
         if (other == null) return false;
 
         if (other instanceof DSSet) {
@@ -49,7 +69,7 @@ public class DSSet implements DSElement {
             for (DSElement e : elements) {
                 boolean found = false;
                 for (DSElement f : test.elements) {
-                    if (e.equalsTo(f)) {
+                    if (e.equals(f)) {
                         found = true;
                         break;
                     }
@@ -65,17 +85,16 @@ public class DSSet implements DSElement {
     }
 
     @Override
-    public Object makeCopy() {
+    public DSSet copy() {
         if (isEmpty()) {
             return new DSSet();
         } else {
+            List<DSElement> elements = new ArrayList<>();
+            this.elements.forEach(e->{
+                   elements.add(e.copy());
+            });
             return new DSSet(elements.toArray(new DSElement[1]));
         }
-    }
-
-    @Override
-    public String toString() {
-        return asString();
     }
 
     public DSSet intersect(DSSet other) {
@@ -83,8 +102,8 @@ public class DSSet implements DSElement {
 
         for (DSElement e : this.elements) {
             for (DSElement o : other.elements) {
-                if (e.equalsTo(o)) {
-                    elements.add((DSElement) e.makeCopy());
+                if (e.equals(o)) {
+                    elements.add((DSElement) e.copy());
                 }
                 ;
             }
@@ -102,11 +121,11 @@ public class DSSet implements DSElement {
 
         for (DSElement o : other.elements) {
             for (DSElement e : elements) {
-                if (e.equalsTo(o)) {
+                if (e.equals(o)) {
                     continue;
                 }
             }
-            elements.add((DSElement) o.makeCopy());
+            elements.add((DSElement) o.copy());
         }
 
         if (elements.isEmpty()) return new DSSet();
@@ -117,15 +136,60 @@ public class DSSet implements DSElement {
     public DSSet subtract (DSSet other) {
         List<DSElement> elements = new ArrayList<>();
 
-        elements.addAll(this.elements);
+        this.elements.forEach(e->{
+            elements.add(e.copy());
+        });
 
         for (DSElement o : other.elements) {
-            elements.removeIf(e -> e.equalsTo(o));
+            elements.removeIf(e -> e.equals(o));
         }
 
         if (elements.isEmpty()) return new DSSet();
 
         return new DSSet(elements.toArray(new DSElement[1]));
+    }
+
+    public DSSet complement(DSSet whole) {
+        return subtract(whole);
+    }
+
+    public DSSet symmetricDifference(DSSet other) {
+        List<DSElement> elements = new ArrayList<>();
+        for (DSElement e : this.elements) {
+            boolean found = false;
+            for (DSElement o : other.elements) {
+                if (o.equals(e)) {
+                    found=true;
+                    break;
+                }
+            }
+            if (!found) {
+                elements.add(e.copy());
+            }
+        }
+
+        for (DSElement o: other.elements) {
+            boolean found = false;
+            for (DSElement e : this.elements) {
+                if (o.equals(e)) {
+                    found=true;
+                    break;
+                }
+            }
+            if (!found) {
+                elements.add(o.copy());
+            }
+        }
+
+        if (elements.isEmpty()) {
+            return new DSSet();
+        } else {
+            return new DSSet(elements);
+        }
+    }
+
+    public DSElement getElement(int position) {
+        return elements.get(position).copy();
     }
 
 }

@@ -2,6 +2,9 @@ package dslib;
 
 import org.junit.Test;
 
+import java.util.List;
+import java.util.Spliterators;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -11,251 +14,174 @@ public class AppTest
 {
 
     /**
-     * We test if our DSMember class will accept classes that do not override equals
-     * and toString methods. If it does, this is an error, because we rely on these
-     * classes to compare values not references, and in addition we need toString to
-     * implement further comparisons.
+     * Test DSValue equals and copy methods
      */
     @Test
-    public void TestDSMemberTypeInstantiation() {
-        class Test { }
+    public void testDSValueCopyAndEquals() {
+        DSValue i = new DSValue("5");
+        DSValue j = i.copy();
 
-        assertThrows(IllegalArgumentException.class, ()->{
-            DSValue<Test> d = new DSValue<Test>(new Test());
-        });
+        assertEquals(i, j);
 
-        class SecondTest {
-            @Override
-            public boolean equals(Object obj) {
-                return super.equals(obj);
-            }
-        }
-        assertThrows(IllegalArgumentException.class, ()->{
-            DSValue<SecondTest> d = new DSValue<SecondTest>(new SecondTest());
-        });
+        DSValue k = new DSValue("6");
+        assertNotEquals(i, k);
 
-        class ThirdTest {
-            @Override
-            public String toString() {
-                return super.toString();
-            }
-        }
-        assertThrows(IllegalArgumentException.class, ()->{
-            DSValue<ThirdTest> d = new DSValue<ThirdTest>(new ThirdTest());
-        });
-
-
-        class FourthTest {
-            @Override
-            public String toString() {
-                return super.toString();
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                return super.equals(obj);
-            }
-        }
-        assertDoesNotThrow(()->{
-            DSValue<FourthTest> d = new DSValue<>(new FourthTest());
-        });
-
-
-    }
-    /**
-     * Test DSElement equals and copy methods
-     */
-    @Test
-    public void testDSMemberCopyAndEquals() {
-        DSValue<Integer> i = new DSValue<>(5);
-        DSValue<Integer> j = i.makeCopy();
-
-        assertTrue(i.equalsTo(j));
-
-        DSValue<Integer> k = new DSValue<>(6);
-        assertFalse(i.equalsTo(k));
-
-        DSValue<String> s = new DSValue<>("test");
-        DSValue<String> t = s.makeCopy();
-        assertTrue(s.equalsTo(t));
+        DSValue s = new DSValue("test");
+        DSValue t = s.copy();
+        assertEquals(s, t);
     }
 
     /**
-     * Tests equal method of DSSet
+     * Tests equals and copy methods of DSSet
      */
     @Test
     public void testDSSetEquals() {
-        DSSet s = new DSSet(new DSValue<>("alpha"), new DSValue<>(5), new DSPair<>("beta",6));
-        DSSet p = (DSSet) s.makeCopy();
+        DSSet s = new DSSet(new DSValue("alpha"), new DSValue("5"), new DSPair("beta","6"));
+        DSSet p = s.copy();
+        assertEquals(s, p);
+        assertEquals(p, s);
+
         DSSet q = new DSSet(new DSSet());
-        assertTrue(s.equalsTo(p));
-        assertTrue(q.equalsTo(q));
-        assertFalse(q.equalsTo(s));
+        assertEquals(q, q);
+
         DSSet a = new DSSet();
         DSSet b = new DSSet();
-        assertTrue(a.equalsTo(b));
-        DSSet c = new DSSet(new DSSet());
-        assertFalse (c.equalsTo(a));
-        DSSet d = new DSSet(new DSValue<>('a'), new DSValue<>('b'), new DSValue<>('a'));
-        DSSet e = new DSSet(new DSValue<>('b'), new DSValue<>('a'));
-        assertTrue(d.equalsTo(e));
+        assertEquals(a, b);
+        assertEquals(b, a);
 
+
+        DSSet d = new DSSet("a","b", "a");
+        DSSet e = new DSSet("a", "b");
+        assertEquals(d, e);
+        assertEquals(e, d);
+
+    }
+
+    /**
+     * Test pair inversion
+     */
+    @Test
+    public void testDSPairInverse() {
+        DSPair a = new DSPair("1","2");
+        DSPair b = new DSPair("2","1");
+        assertEquals(a, b.invert());
+        assertEquals(a.invert(), b);
     }
 
     @Test
-    public void testDSPairCompare() {
-        DSPair<Integer, Integer> a = new DSPair<>(1,2);
-        DSPair<Integer, Integer> b = new DSPair<>(1,2);
-        assertEquals(0, a.compareTo(b));
+    public void testDSParserSplit() {
+        assertEquals(3, DSParser.split("1,2,3").size());
+        assertEquals(4, DSParser.split("1,,2,3").size());
+        assertEquals(3, DSParser.split("{1,2},2,3").size());
+        assertEquals(1, DSParser.split("(1,2,2,3)").size());
+        assertEquals(3, DSParser.split("1,\"2,2\",3").size());
+        assertEquals(4, DSParser.split("1,'2',2,3").size());
+        assertEquals(0, DSParser.split("").size());
 
-        a = new DSPair<>(2,2);
-        assertEquals(1, a.compareTo(b));
-        assertEquals(-1, b.compareTo(a));
+        List<String> parts = DSParser.split("1,2,3");
+        assertEquals("1", parts.get(0));
+        assertEquals("2", parts.get(1));
+        assertEquals("3", parts.get(2));
 
-        a = new DSPair<>(0, 1);
-        b = new DSPair<>(0, 2);
-        assertEquals(-1, a.compareTo(b));
-        assertEquals(1, b.compareTo(a));
+        parts = DSParser.split("1,\"2,2\",3");
+        assertEquals("1", parts.get(0));
+        assertEquals("\"2,2\"", parts.get(1));
+        assertEquals("3", parts.get(2));
 
+        parts = DSParser.split("{1,2},2,3");
+        assertEquals("{1,2}", parts.get(0));
+        assertEquals("2", parts.get(1));
+        assertEquals("3", parts.get(2));
     }
 
     @Test
-    public void testDSSParserDetect() {
-        assertSame(DSSetParser.detect("{}"), DSSetParser.ElementType.ET_EMPTY_DSSET);
-        assertSame(DSSetParser.detect("{  }"), DSSetParser.ElementType.ET_EMPTY_DSSET);
-        assertSame(DSSetParser.detect("{a,b,c}"), DSSetParser.ElementType.ET_DSSET);
-        assertSame(DSSetParser.detect("{{a,b,c}}"), DSSetParser.ElementType.ET_DSSET);
-        assertSame(DSSetParser.detect("{a,b,{c}}"), DSSetParser.ElementType.ET_DSSET);
-        assertSame(DSSetParser.detect("{(a,b),{c}}"), DSSetParser.ElementType.ET_DSSET);
-        assertSame(DSSetParser.detect("{(c)}"), DSSetParser.ElementType.ET_DSSET);
-        assertSame(DSSetParser.detect("{(),{c}}"), DSSetParser.ElementType.ET_DSSET);
+    public void testDSParse() {
+        DSElement a = DSParser.parse("(1,2)");
+        assertTrue(a instanceof DSPair);
+        assertEquals("1", ((DSPair)a).getFirst().toString());
+        assertEquals("2", ((DSPair)a).getSecond().toString());
 
-        assertSame(DSSetParser.detect("(1,2)"), DSSetParser.ElementType.ET_DSPAIR);
-        assertSame(DSSetParser.detect("((1,2),2)"), DSSetParser.ElementType.ET_DSPAIR);
-        assertSame(DSSetParser.detect("(\"1\",2)"), DSSetParser.ElementType.ET_DSPAIR);
-        assertSame(DSSetParser.detect("({1,2},2)"), DSSetParser.ElementType.ET_DSPAIR);
-        assertSame(DSSetParser.detect("({1,2},{3,4})"), DSSetParser.ElementType.ET_DSPAIR);
-        assertSame(DSSetParser.detect("(\"1\",\"2,,,,\", 4)"), DSSetParser.ElementType.ET_DSPAIR);
+        DSSet b = (DSSet) DSParser.parse("{1,2,3}");
+        assertEquals("{1,2,3}", b.toString());
+        assertEquals(new DSSet(new DSValue("1"),
+                        new DSValue("2"),
+                        new DSValue("3")), b);
 
+        DSSet c = (DSSet) DSParser.parse("{ {a,b} , (1,2), 1}");
+        assertEquals(c.getElement(0), new DSSet(new DSValue("a"),
+                new DSValue("b")));
+        assertEquals(c.getElement(1), new DSPair(new DSValue("1"),
+                new DSValue("2")));
+        assertEquals(c.getElement(2), new DSValue("1"));
     }
 
 
-//
-//    @Test
-//    public void testDSSetIsSetRepresentation() {
-//        assertFalse(DSSet.isSetRepresentation("{"));
-//        assertTrue(DSSet.isSetRepresentation("{}"));
-//        assertFalse(DSSet.isSetRepresentation("}"));
-//    }
-//
-//    @Test
-//    public void testDSPairIsPairRepresentation() {
-//        assertTrue(DSPair.isPairRepresentation("(1,2)"));
-//        assertFalse(DSPair.isPairRepresentation("(1,2,3)"));
-//        assertTrue(DSPair.isPairRepresentation("({1,2},{})"));
-//        assertFalse(DSPair.isPairRepresentation("({1,2}, {1"));
-//        assertFalse(DSPair.isPairRepresentation("({1,2}, {1}"));
-//        assertFalse(DSPair.isPairRepresentation("({1,2}, {1)"));
-//        // Should we have tuples with empty elements ?
-//        assertTrue(DSPair.isPairRepresentation("(,)"));
-//        assertTrue(DSPair.isPairRepresentation("(1,)"));
-//        assertTrue(DSPair.isPairRepresentation("(,1)"));
-//    }
-//
-//    @Test
-//    public void testDSPairInverse() {
-//        DSPair<Integer, Integer> a = new DSPair<>(1,2);
-//        DSPair<Integer, Integer> b = new DSPair<>(2,1);
-//        assertTrue(a.equalsTo(b.invert()));
-//    }
-//
-//    @Test
-//    public void testDSPairParse() {
-//        DSPair<Integer, String> a;
-//        DSPair<Integer, String> b = new DSPair<>(1, "abds");
-//        assertDoesNotThrow(()->{
-//            DSPair<Integer, String> c = DSPair.parse("(1, abds)", Integer::parseInt, (s)->s);
-//        });
-//
-//        a = DSPair.parse("(1, abds)", Integer::parseInt, (s)->s);
-//        assertTrue(a.equalsTo(b));
-//    }
-//
-//    @Test
-//    public void testDSSetParse() {
-//        DSSet s = DSSet.parse("{a,b,c}");
-//        DSSet stest = new DSSet(new DSValue<>("a"), new DSValue<>("b"), new DSValue<>("c"));
-//        assertTrue(s.equalsTo(stest));
-//
-//        s = DSSet.parse("{a, b, c}");
-//        assertTrue(s.equalsTo(stest));
-//
-//        s = DSSet.parse("{ a,  b , c }");
-//        assertTrue(s.equalsTo(stest));
-//
-//        stest = new DSSet(new DSSet(), new DSSet(new DSValue<>("a")), new DSValue<>("a"));
-//        s = DSSet.parse("{ {}, { a }, a   } ");
-//        assertTrue(s.equalsTo(stest));
-//
-//        stest = new DSSet(new DSPair<>("1","2"), new DSValue<>("1"), new DSValue<>("a"));
-//        s = DSSet.parse("{(1,2),1,a}");
-//        assertTrue(s.equalsTo(stest));
-//    }
-//
-//    @Test
-//    public void testDSSetIntersect() {
-//        DSSet q = DSSet.parse("{a,b,c}");
-//        DSSet p = DSSet.parse("{b,c}");
-//        assertTrue(q.intersect(p).equalsTo(p));
-//
-//        q = DSSet.parse("{{}, a, b}");
-//        p = DSSet.parse("{}");
-//        assertTrue(q.intersect(p).equalsTo(p));
-//        assertTrue(p.intersect(q).equalsTo(p));
-//
-//        p = DSSet.parse("{{}}");
-//        assertTrue(p.intersect(q).equalsTo(p));
-//        assertTrue(q.intersect(p).equalsTo(p));
-//
-//        p = DSSet.parse("{{ }}");
-//        assertTrue(p.intersect(q).equalsTo(p));
-//        assertTrue(q.intersect(p).equalsTo(p));
-//    }
-//
-//    @Test
-//    public void testDSSJoin() {
-//        DSSet p = DSSet.parse("{a,b,c}");
-//        DSSet q = DSSet.parse("{d, e, f, a}");
-//        DSSet r = DSSet.parse("{a,b,c,d,e,f}");
-//        assertTrue(p.join(q).equalsTo(r));
-//
-//        p = DSSet.parse("{}");
-//        assertTrue(p.join(p).equalsTo(p));
-//
-//        p = DSSet.parse("{a,a,a}");
-//        q = DSSet.parse("{a}");
-//        assertTrue(p.equalsTo(q));
-//
-//        q = DSSet.parse("{a,b}");
-//        assertTrue(p.equalsTo(q));
-//
-//        p = DSSet.parse("{a, (1,2), {1,2}}");
-//        q = DSSet.parse("{4,5}");
-//        r = DSSet.parse("{{4,5}, a, (1,2), {1,2}}");
-//
-//    }
-//
-//    @Test
-//    public void testDSSSubtract() {
-//        DSSet p = DSSet.parse("{a,b,c}");
-//        DSSet q = DSSet.parse("{a,b}");
-//        assertTrue(p.subtract(q).equalsTo(DSSet.parse("{c}")));
-//        assertTrue(q.subtract(p).equalsTo(DSSet.parse("{}")));
-//
-//        p = DSSet.parse("{(1,2),{(1,2),a,b}");
-//        q = DSSet.parse("{{b,a,(1,2)}, (1,2)}");
-//        assertTrue(p.subtract(q).equalsTo(new DSSet()));
-//    }
+    @Test
+    public void testDSSetIntersect() {
+        DSSet q = (DSSet) DSParser.parse("{a,b,c}");
+        DSSet p = (DSSet) DSParser.parse("{b,c}");
+        assertEquals(q.intersect(p), p);
+        assertEquals(p.intersect(q), q);
+
+        q = (DSSet) DSParser.parse("{{}, a, b}");
+        p = (DSSet) DSParser.parse("{}");
+        assertEquals(q.intersect(p), p);
+        assertEquals(p.intersect(q), q);
+
+        p = (DSSet) DSParser.parse("{{}}");
+        assertEquals(q.intersect(p), p);
+        assertEquals(p.intersect(q), q);
+
+        p = (DSSet) DSParser.parse("{{ }}");
+        assertEquals(q.intersect(p), p);
+        assertEquals(p.intersect(q), q);
+    }
+
+    @Test
+    public void testDSSJoin() {
+        DSSet p = (DSSet) DSParser.parse("{a,b,c}");
+        DSSet q = (DSSet) DSParser.parse("{d, e, f, a}");
+        DSSet r = (DSSet) DSParser.parse("{a,b,c,d,e,f}");
+        assertEquals(p.join(q), r);
+        assertEquals(q.join(p), r);
+
+        p = (DSSet) DSParser.parse("{}");
+        assertEquals(p.join(p), p);
+
+        p = (DSSet) DSParser.parse("{a,a,a}");
+        q = (DSSet) DSParser.parse("{a}");
+        assertEquals(p.join(q), q);
+        assertEquals(q.join(p), p);
+
+        p = (DSSet) DSParser.parse("{a, (1,2), {1,2}}");
+        q = (DSSet) DSParser.parse("{{4,5}}");
+        r = (DSSet) DSParser.parse("{{4,5}, a, (1,2), {1,2}}");
+        assertEquals(p.join(q), q.join(p));
+        assertEquals(p.join(q), r);
+    }
+
+    @Test
+    public void testDSSSubtract() {
+        DSSet p = (DSSet) DSParser.parse("{a,b,c}");
+        DSSet q = (DSSet) DSParser.parse("{a,b}");
+        assertEquals(p.subtract(q), DSParser.parse("{c}"));
+        assertEquals(q.subtract(p), DSParser.parse("{}"));
+
+        p = (DSSet) DSParser.parse("{(1,2),{(1,2),a,b}}");
+        q = (DSSet) DSParser.parse("{{b,a,(1,2)}, (1,2)}");
+        assertEquals(p.subtract(q), new DSSet());
+    }
+
+    @Test
+    public void testDSSSymmetricDifference() {
+        DSSet p = (DSSet) DSParser.parse("{a,b,c}");
+        DSSet q = (DSSet) DSParser.parse("{a,b}");
+        assertEquals(p.symmetricDifference(q), DSParser.parse("{c}"));
+
+        p = (DSSet) DSParser.parse("{a,{b,1},c}");
+        q = (DSSet) DSParser.parse("{a,{b,2}}");
+        assertEquals(p.symmetricDifference(q), DSParser.parse("{{b,1}, {b,2}, c}"));
+    }
 
     {
         assertTrue( true );
