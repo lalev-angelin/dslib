@@ -257,6 +257,11 @@ public class AppTest
         assertEquals(g,e);
         DSRelation h = b.compose(a);
         assertEquals(h, f);
+
+        DSRelation ainv = a.inverse();
+        DSRelation aident = DSRelation.identityRelationOf(a);
+        assertEquals(ainv.compose(a), aident);
+        assertEquals(a.compose(ainv), aident);
     }
 
     {

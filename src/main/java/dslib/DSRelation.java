@@ -108,26 +108,8 @@ public class DSRelation implements DSElement {
         return asSet().toString();
     }
 
-    public static DSRelation identityRelation(int dims) {
-        List<DSPair> members = new ArrayList<>();
-
-        if (dims<1) {
-            throw new IllegalArgumentException("Invalid number of dimensions: "+dims);
-        }
-
-        for (int i=0; i<dims; i++) {
-            members.add(new DSPair(String.valueOf(i), String.valueOf(i)));
-        }
-
-        if (dims==1) {
-            return new DSRelation(members.get(0));
-        } else {
-            return new DSRelation(members.toArray(new DSPair[1]));
-        }
-    }
-
-    public static DSRelation identityRelationOf(DSRelation other) {
-        return identityRelation(other.getDimensions());
+    public static DSRelation identityRelationOf(DSRelation rel) {
+        List<>
     }
 
     public int getDimensions() {
