@@ -1,28 +1,15 @@
-package dslib;
+package dslib.testapp;
+
+import dslib.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
-/**
- * Hello world!
- *
- */
-
-public class App {
-
-        public static void printMenu() {
-        System.out.println();
-        System.out.println("Меню");
-        System.out.println("====================================");
-        System.out.println("1. Задачи по действия с множества");
-        System.out.println("2. Задачи за релации");
-        System.out.println("9. Изход");
-        System.out.print("Изберете [129]: ");
-    }
-
-    public static void setPractice1 (Scanner s) {
+public class Excercises {
+    public static void setPractice1 (Consumer<String> printer, Consumer<String> messenger) {
         DSSet set1;
         DSSet set2;
 
@@ -88,59 +75,78 @@ public class App {
 
                 set2 = DSGenerator.generateSet(2, 5,
                         new DSElement[] {
-                            new DSValue("1"),
-                            new DSValue("2"),
-                            new DSValue("3"),
-                            new DSValue("4"),
-                            DSParser.parse("{1,2}"),
-                            DSParser.parse("{2,4}"),
-                            DSParser.parse("{}")
+                                new DSValue("1"),
+                                new DSValue("2"),
+                                new DSValue("3"),
+                                new DSValue("4"),
+                                DSParser.parse("{1,2}"),
+                                DSParser.parse("{2,4}"),
+                                DSParser.parse("{}")
                         });
                 break;
         }
 
-        System.out.println("Намерете обединението, сечението, разликата и симетричната разлика на множествата:");
-        System.out.println(set1);
-        System.out.println(set2);
-        System.out.print("Натиснете Enter за получаване на решенията: ");
-        s.nextLine();
+        printer.accept("Намерете обединението, сечението, разликата и симетричната разлика на множествата:");
+        printer.accept(set1.toString());
+        printer.accept(set2.toString());
+        messenger.accept("Получи решението сега!");
 
-        System.out.print(set1);
-        System.out.print(" \u222a ");
-        System.out.print(set2);
-        System.out.print(" = ");
-        System.out.println(set1.union(set2));
+        printer.accept(set1 + " \u222a " + set2 + " = " +
+                set1.union(set2));
 
-        System.out.print(set1);
-        System.out.print(" \u2229 ");
-        System.out.print(set2);
-        System.out.print(" = ");
-        System.out.println(set1.intersect(set2));
+        printer.accept(set1 + " \u2229 " + set2 + " = " +
+                set1.intersect(set2));
 
-        System.out.print(set1);
-        System.out.print(" - ");
-        System.out.print(set2);
-        System.out.print(" = ");
-        System.out.println(set1.subtract(set2));
+        printer.accept(set1 + " - " + set2 + " = " +
+                set1.subtract(set2));
 
-        System.out.print(set1);
-        System.out.print(" \u2a01 ");
-        System.out.print(set2);
-        System.out.print(" = ");
-        System.out.println(set1.symmetricDifference(set2));
+        printer.accept(set1 + " \u2295 "+ set2 +" = "+
+                set1.symmetricDifference(set2));
 
-        System.out.print("2^");
-        System.out.print(set1);
-        System.out.print(" = ");
-        System.out.println(set1.powerSet());
+        printer.accept("2^" + set1 + " = " +
+                set1.powerSet());
 
-        System.out.print("2^");
-        System.out.print(set2);
-        System.out.print(" = ");
-        System.out.println(set2.powerSet());
+        printer.accept("2^" + set2 + " = " +
+                set2.powerSet());
     }
 
-    public static void setPractice2 (Scanner s) {
+
+    public static void setPractice2 (Consumer<String> printer, Consumer<String> messenger) {
+        DSSet set1;
+        DSSet set2;
+
+        set1 = DSGenerator.generateSet(4, 4,
+                new DSElement[]{
+                        new DSValue("a"),
+                        new DSValue("b"),
+                        new DSValue("c"),
+                        new DSValue("d"),
+                        new DSValue("e"),
+                        new DSValue("f")
+                });
+
+        set2 = DSGenerator.generateSet(3, 3,
+                new DSElement[]{
+                        new DSValue("a"),
+                        new DSValue("b"),
+                        new DSValue("c"),
+                        new DSValue("d"),
+                        new DSValue("e"),
+                        new DSValue("f")
+                });
+
+        printer.accept("Намерете степенното множество на множествата: "
+                + set1 + set2);
+        messenger.accept("Получи решението сега!");
+
+        printer.accept("2^" + set1 + " = " +
+                set1.powerSet());
+
+        printer.accept("2^" + set2 + " = " +
+                set2.powerSet());
+    }
+
+    public static void setPractice3 (Consumer<String> printer, Consumer<String> messenger) {
         Random r = new Random(System.currentTimeMillis());
 
         DSSet set1;
@@ -196,74 +202,10 @@ public class App {
             set2 = new DSSet(elements);
         }
 
-        System.out.println("Намерете допълнението на множеството " + set2 + " в " + set1);
-        System.out.print("Натиснете Enter за да видите решенията: ");
-        s.nextLine();
+        printer.accept("Намерете допълнението на множеството " + set2 + " в " + set1);
+        messenger.accept("Получи решението сега!");
 
         System.out.println(set2.complement(set1));
     }
 
-    public static void relationPractice1(Scanner s) {
-        Random r = new Random(System.currentTimeMillis());
-        int numPairs = 2 + r.nextInt(3);
-        List<DSPair> pairs = new ArrayList<>();
-        for (int i=0; i<numPairs; i++) {
-            pairs.add(new DSPair(String.valueOf(r.nextInt(5)), String.valueOf(r.nextInt(5))));
-        }
-
-        List<DSPair> members = new ArrayList<>();
-        for (int i=0; i<pairs.size(); i++) {
-            if (r.nextBoolean()) {
-                members.add(pairs.get(i));
-            }
-        }
-        DSRelation r1 = new DSRelation(members);
-        members.clear();
-
-        for (int i=0; i<pairs.size(); i++) {
-            if (r.nextBoolean()) {
-                members.add(pairs.get(i));
-            }
-        }
-        DSRelation r2 = new DSRelation(members);
-
-        System.out.println("Намерете "+r1+" \u25ef "+r2);
-
-        System.out.println("Натиснете Enter за отговор: ");
-        s.nextLine();
-
-        System.out.println(r1+" \u25ef "+r2+" = "+r1.compose(r2));
-    }
-
-
-    public static void main( String[] args ) {
-        Scanner s = new Scanner(System.in);
-
-         String choice;
-        while (true) {
-            try {
-                printMenu();
-                choice = s.nextLine();
-            } catch (Exception e) {
-                continue;
-            }
-
-            if (choice.strip().equals("1")) {
-                setPractice1(s);
-                System.out.println();
-                setPractice2(s);
-                continue;
-            }
-
-            if (choice.strip().equals("2")) {
-                relationPractice1(s);
-                continue;
-            }
-
-            if (choice.strip().equals("9")) {
-                System.exit(0);
-            }
-
-        }
-    }
 }

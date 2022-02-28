@@ -11,7 +11,7 @@ public class DSGenerator {
         List<DSElement> e = new ArrayList<>();
 
         if (minElements>maxElements) return new DSSet();
-        int j = r.nextInt(maxElements-minElements);
+        int j = r.nextInt(maxElements);
 
         for (int i=0; i<minElements+j; i++) {
             e.add(elements[r.nextInt(elements.length)].copy());

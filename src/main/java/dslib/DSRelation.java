@@ -109,7 +109,8 @@ public class DSRelation implements DSElement {
     }
 
     public static DSRelation identityRelationOf(DSRelation rel) {
-        List<>
+        //TODO
+        return null;
     }
 
     public int getDimensions() {
