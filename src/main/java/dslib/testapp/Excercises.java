@@ -103,11 +103,6 @@ public class Excercises {
         printer.accept(set1 + " \u2295 "+ set2 +" = "+
                 set1.symmetricDifference(set2));
 
-        printer.accept("2^" + set1 + " = " +
-                set1.powerSet());
-
-        printer.accept("2^" + set2 + " = " +
-                set2.powerSet());
     }
 
 
@@ -135,8 +130,8 @@ public class Excercises {
                         new DSValue("f")
                 });
 
-        printer.accept("Намерете степенното множество на множествата: "
-                + set1 + set2);
+        printer.accept("Намерете степенните множества на "
+                + set1 + " и " + set2);
         messenger.accept("Получи решението сега!");
 
         printer.accept("2^" + set1 + " = " +
@@ -205,7 +200,7 @@ public class Excercises {
         printer.accept("Намерете допълнението на множеството " + set2 + " в " + set1);
         messenger.accept("Получи решението сега!");
 
-        System.out.println(set2.complement(set1));
+        printer.accept(set2.complement(set1).toString());
     }
 
 }

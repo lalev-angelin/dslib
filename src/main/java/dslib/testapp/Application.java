@@ -68,7 +68,7 @@ public class Application extends TApplication {
 
         if (menu.getId() == MENU_SET_OPERATIONS_3) {
             w.clear();
-            Excercises.setPractice1(w::addText, (a)->new TMessageBox(app, "Съобщение", a));
+            Excercises.setPractice3(w::addText, (a)->new TMessageBox(app, "Съобщение", a));
             return true;
         }
 
